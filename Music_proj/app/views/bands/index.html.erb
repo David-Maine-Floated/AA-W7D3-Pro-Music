@@ -1,0 +1,5 @@
+<h1>Music App Not Generic</h1>
+
+<% @bands.each do |band| %>
+    <a href='<%= band_url(band[:id]) %>'><%= band.name%><br></a>
+<% end %>

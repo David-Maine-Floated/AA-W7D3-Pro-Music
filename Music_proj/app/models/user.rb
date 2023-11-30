@@ -16,15 +16,18 @@ class User < ApplicationRecord
 
     before_validation :ensure_token
 
-    validates :email, presence :true, uniqueness: true 
-    # validates :session_token, presence: true, iniqueness: true   #why????
+    validates :email, presence: true, uniqueness: true 
+    validates :session_token, presence: true, uniqueness: true   #why????
     validates :password_digest, presence: true 
     validates :password, allow_nil: true, length: {minimum:6}
 
+
+
+
     attr_reader :password 
 
-    def self.find_user_by_credentials(username, password) 
-        user = User.find_by(username: userrname)
+    def self.find_user_by_credentials(email, password) 
+        user = User.find_by(email: email)
         if user && user.is_password?(password)
             user 
         else  
@@ -38,11 +41,11 @@ class User < ApplicationRecord
     end
 
     def ensure_token 
-        self.session_token ||= SecureRandom::urlsafe_64
+        self.session_token ||= SecureRandom::urlsafe_base64
     end
 
     def reset_session_token! #login
-        self.session_token = SecureRandom::urlsafe_64
+        self.session_token = SecureRandom::urlsafe_base64
         self.save! 
         self.session_token 
     end
@@ -51,11 +54,5 @@ class User < ApplicationRecord
         BCrypt::Password.new(self.password_digest).is_password?(password)
     end
 
-
-private 
-
-    def user_params 
-        params.require(:user).permit(:email, :password)
-    end
 
 end
